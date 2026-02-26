@@ -1,13 +1,13 @@
 import discord
 from discord.ext import commands
 import logging
-import json
-with open("config.json", "r") as json_file:
-    a = json.load(json_file)
-
-token = (a["token"])
+from config import Config
 
 handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
+
+config = Config()
+config.get_config('config.json')
+print(config.test)
 
 intents = discord.Intents.default()
 
@@ -26,4 +26,4 @@ async def on_message(message):
     if message.content.lower() in ["здарова", "привет", "hi"]:
         await message.channel.send("Здарова лох)")
 
-bot.run(token, log_handler=handler, log_level=logging.DEBUG)
+bot.run(config.token, log_handler=handler, log_level=logging.DEBUG)
