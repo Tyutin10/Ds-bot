@@ -39,6 +39,11 @@ async def load(ctx, extension):
 async def unload(ctx, extension):
     await bot.unload_extension(f'cogs.{extension}')
 
+@bot.command()
+async def reload(ctx, extension):
+    await bot.unload_extension(f'cogs.{extension}')
+    await bot.load_extension(f'cogs.{extension}')
+
 # Events
 
 @bot.event
