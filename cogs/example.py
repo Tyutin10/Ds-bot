@@ -5,7 +5,7 @@ class Example(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
-        print("Example cog initialized")
+        print("Example cog initialized!")
 
     # Commands
     @commands.command()

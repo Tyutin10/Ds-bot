@@ -5,11 +5,17 @@ from config import Config
 import os
 import asyncio
 
+# Logs
+
 handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
+
+# Configs
 
 config = Config()
 config.get_config('config.json')
-print(config.test)
+print(config.Check)
+
+# Intents settings
 
 intents = discord.Intents.default()
 
@@ -48,13 +54,13 @@ async def reload(ctx, extension):
 
 @bot.event
 async def on_ready():
-    print(f'Logged in as {bot.user}')
+    print(f'{bot.user} online!')
 
 @bot.event
 async def on_message(message):
-    if message.author.bot: return print('Сообщение бота не учитывается')
-    if message.content.lower() in ["здарова", "привет", "hi"]:
-        await message.channel.send("Здарова лох)")
+    if message.author.bot: return print('Сообщение бота не учитывается.')
+    if message.content.lower() in ["здорова", "привет", "hi"]:
+        await message.channel.send("Салам")
     await bot.process_commands(message)
 
 
@@ -62,6 +68,8 @@ async def main():
     async with bot:
         await load_cogs()
         await bot.start(config.token)
+
+# Botrun
 
 asyncio.run(main())
 bot.run(config.token, log_handler=handler, log_level=logging.DEBUG)
