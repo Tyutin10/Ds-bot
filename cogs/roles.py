@@ -6,7 +6,7 @@ from discord.utils import get
 class RoleManager(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.roles = {}  # Хранилище ролей
+        self.roles = {}
         print("RoleManager cog initialized!")
 
     async def add_role(self, ctx, member: discord.Member, role_name: str):
@@ -56,36 +56,33 @@ class RoleManager(commands.Cog):
         except Exception as e:
             await ctx.send(f"Ошибка при удалении роли: {str(e)}")
 
-        # Регистрация команд
-        @commands.has_permissions(manage_roles=True)
-        async def addrole(ctx, member: discord.Member, role_name: str):
-            role_manager = RoleManager(bot)
-            await RoleManager.add_role(ctx, member, role_name)
+    @commands.command(name="addrole")
+    @commands.has_permissions(manage_roles=True)
+    async def addrole_cmd(self, ctx, member: discord.Member, role_name: str):
+        await self.add_role(ctx, member, role_name)
 
-        @commands.has_permissions(manage_roles=True)
-        async def removerole(ctx, member: discord.Member, role_name: str):
-            role_manager = RoleManager(bot)
-            await RoleManager.remove_role(ctx, member, role_name)
+    @commands.command(name="removerole")
+    @commands.has_permissions(manage_roles=True)
+    async def removerole_cmd(self, ctx, member: discord.Member, role_name: str):
+        await self.remove_role(ctx, member, role_name)
 
-        @commands.has_permissions(manage_roles=True)
-        async def createrole(ctx, role_name: str, color: str = "default"):
-            color_map = {
-                "default": discord.Color.default(),
-                "red": discord.Color.red(),
-                "green": discord.Color.green(),
-                "blue": discord.Color.blue()
-            }
-            
-            role_color = color_map.get(color, discord.Color.default())
-            role_manager = RoleManager(bot)
-            await RoleManager.create_role(ctx, role_name, role_color)
+    @commands.command(name="createrole")
+    @commands.has_permissions(manage_roles=True)
+    async def createrole_cmd(self, ctx, role_name: str, color: str = "default"):
+        color_map = {
+            "default": discord.Color.default(),
+            "red": discord.Color.red(),
+            "green": discord.Color.green(),
+            "blue": discord.Color.blue()
+        }
+        role_color = color_map.get(color, discord.Color.default())
+        await self.create_role(ctx, role_name, role_color)
 
-        @bot.command()
-        @commands.has_permissions(manage_roles=True)
-        async def deleterole(ctx, role_name: str):
-            role_manager = RoleManager(bot)
-            await role_manager.delete_role(ctx, role_name)
+    @commands.command(name="deleterole")
+    @commands.has_permissions(manage_roles=True)
+    async def deleterole_cmd(self, ctx, role_name: str):
+        await self.delete_role(ctx, role_name)
+
 
 async def setup(bot):
     await bot.add_cog(RoleManager(bot))
-    
