@@ -12,7 +12,7 @@ class RoleManager(commands.Cog):
         await interaction.response.send_message(f"your roles: {rolenames}", ephemeral=True)
 
     @commands.slash_command(name='забрать_роль', description='Отзыв роли у пользователя')
-    async def take_role(interaction, member: disnake.Member, role: disnake.Role):
+    async def take_role(self, interaction, member: disnake.Member, role: disnake.Role):
         await member.remove_roles(role)
         await interaction.response.send_message('Роль отозвана!')
 
