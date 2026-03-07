@@ -10,7 +10,7 @@ class Example(commands.Cog):
     
     @commands.Cog.listener()
     async def on_ready(self):
-        print("example cog loaded")
+        print("Example ready!")
 
     @commands.slash_command()
     async def sosal(self, interaction: disnake.CommandInteraction):

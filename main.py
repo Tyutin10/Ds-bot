@@ -14,13 +14,17 @@ bot = InteractionBot(intents=intents)
 
 @bot.event
 async def on_ready():
-    
-    print("Im ready")
+    print(f"✅ BOT logged as {bot.user}")
+    print(f"🆔 ID: {bot.user.id}")
+    print(f"📊 Servers: {len(bot.guilds)}")
 
 for file in os.listdir(r"./cogs"):
     if file.endswith(".py"):
-        print(file)
-        bot.load_extension(f"cogs.{file[:-3]}")
+        try:
+            bot.load_extension(f"cogs.{file[:-3]}")
+            print(f"✅ Loaded {file}")
+        except Exception as e:
+            print(f"❌ Failed to load {file}: {e}")
 
 
 bot.run(config.token)
