@@ -1,29 +1,43 @@
 from disnake.ext import commands
 import disnake
 
-SELF_ROLES = [
-    1479154920761589972,  # Chill
-    1479154874112544922,  # Working
-    1479154801450156223   # Afk
-]
 
 class RoleDropdown(disnake.ui.Select):
+
     def __init__(self, guild):
 
         options = []
 
-        for role_id in SELF_ROLES:
-            role = guild.get_role(role_id)
-            if role:
-                options.append(disnake.SelectOption(label=role.name,value=str(role.id)))
+        for role in guild.roles:
 
-        super().__init__(placeholder="Выберите роль",min_values=1,max_values=1,options=options)
+            if role.is_default():
+                continue
+            if role.is_default():
+                continue
+
+            if role.permissions.administrator:
+                continue
+
+            if role.managed:
+                continue
+
+            if role.position >= guild.me.top_role.position:
+                continue
+
+            options.append(disnake.SelectOption(label=role.name, value=str(role.id)))
+
+        super().__init__(placeholder="Выберите роль", min_values=1, max_values=1, options=options[:25])
 
     async def callback(self, interaction: disnake.MessageInteraction):
 
         role_id = int(self.values[0])
         role = interaction.guild.get_role(role_id)
-
+        if role.permissions.administrator:
+            await interaction.response.send_message("❌ Нельзя выдавать админ роли", ephemeral=True)
+            return
+        if role.position >= interaction.guild.me.top_role.position:
+            await interaction.response.send_message("❌ Эта роль выше бота", ephemeral=True)
+            return
         if role in interaction.user.roles:
             await interaction.user.remove_roles(role)
             await interaction.response.send_message(f"❌ Роль {role.mention} снята",ephemeral=True)
