@@ -4,40 +4,15 @@ import disnake
 
 class RoleDropdown(disnake.ui.Select):
 
-    def __init__(self, guild):
+    def __init__(self, options):
 
-        options = []
-
-        for role in guild.roles:
-
-            if role.is_default():
-                continue
-            if role.is_default():
-                continue
-
-            if role.permissions.administrator:
-                continue
-
-            if role.managed:
-                continue
-
-            if role.position >= guild.me.top_role.position:
-                continue
-
-            options.append(disnake.SelectOption(label=role.name, value=str(role.id)))
-
+        self.options = options
         super().__init__(placeholder="Выберите роль", min_values=1, max_values=1, options=options[:25])
 
     async def callback(self, interaction: disnake.MessageInteraction):
 
         role_id = int(self.values[0])
         role = interaction.guild.get_role(role_id)
-        if role.permissions.administrator:
-            await interaction.response.send_message("❌ Нельзя выдавать админ роли", ephemeral=True)
-            return
-        if role.position >= interaction.guild.me.top_role.position:
-            await interaction.response.send_message("❌ Эта роль выше бота", ephemeral=True)
-            return
         if role in interaction.user.roles:
             await interaction.user.remove_roles(role)
             await interaction.response.send_message(f"❌ Роль {role.mention} снята",ephemeral=True)
@@ -46,9 +21,9 @@ class RoleDropdown(disnake.ui.Select):
             await interaction.response.send_message(f"✅ Роль {role.mention} выдана",ephemeral=True)
 
 class RoleView(disnake.ui.View):
-    def __init__(self, guild):
+    def __init__(self, options):
         super().__init__(timeout=None)
-        self.add_item(RoleDropdown(guild))
+        self.add_item(RoleDropdown(options))
 
 class RoleManager(commands.Cog):
     def __init__(self, bot):
@@ -70,31 +45,32 @@ class RoleManager(commands.Cog):
         if len(roles_text) > 1800: 
             roles_text = roles_text[:1800] + "\n..."
         await interaction.response.send_message(f"📋 **Роли сервера ({len(role_list)}):**\n{roles_text}", ephemeral=True)
-
-    # @commands.slash_command(name='remove_role', description='Снятие роли')
-    # async def take_role(self, interaction: disnake.CommandInteraction, role: disnake.Role):
-    #     if role not in interaction.user.roles:
-    #         await interaction.response.send_message("У тебя нет такой роли!", ephemeral=True)
-    #         return
-    #     await interaction.user.remove_roles(role)
-    #     await interaction.response.send_message(f'Роль отозвана!', ephemeral=True)
-
-    # @commands.slash_command(name='add_roles', description="Полуение роли")
-    # async def addrole(self, interaction: disnake.CommandInteraction, role: disnake.Role):
-    #     if role in interaction.user.roles:
-    #         await interaction.response.send_message("У тебя уже есть такая роль!", ephemeral=True)
-    #         return
-    #     if role.permissions.administrator or role >= interaction.guild.me.top_role or role.managed:
-    #         await interaction.response.send_message("У вас нет доступа к этой роли!", ephemeral=True)
-    #         return
-    #     await interaction.user.add_roles(role)
-    #     await interaction.response.send_message(f"Роль получена!", ephemeral=True)
     
     @commands.slash_command(description="Отправить меню ролей")
     @commands.has_permissions(administrator=True)
     async def role_menu(self, interaction: disnake.CommandInteraction):
+        roles = [role for role in interaction.guild.roles]
+        options = []
+        
+        for role in roles:
+            
+            match True:
+                case _ if role.is_default():
+                    continue
+
+                case _ if role.permissions.administrator:
+                    continue
+
+                case _ if role.managed:
+                    continue
+
+                case _ if role.position >= interaction.guild.me.top_role.position:
+                    continue
+
+            options.append(disnake.SelectOption(label=role.name, value=str(role.id)))
+
         embed = disnake.Embed(title="🎭 Выбор ролей",description="Выберите роль для добавления/удаления",color=disnake.Color.blue())
-        await interaction.response.send_message(embed=embed,view=RoleView(interaction.guild), ephemeral=True)
+        await interaction.response.send_message(embed=embed,view=RoleView(options), ephemeral=True)
 
 
 def setup(bot):
