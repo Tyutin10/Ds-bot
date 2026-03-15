@@ -2,6 +2,7 @@ from disnake.ext import commands
 import disnake
 
 
+
 class RoleDropdown(disnake.ui.Select):
 
     def __init__(self, options):
@@ -20,12 +21,18 @@ class RoleDropdown(disnake.ui.Select):
             await interaction.user.add_roles(role)
             await interaction.response.send_message(f"✅ Роль {role.mention} выдана",ephemeral=True)
 
+
+
 class RoleView(disnake.ui.View):
+    
     def __init__(self, options):
         super().__init__(timeout=None)
         self.add_item(RoleDropdown(options))
 
+
+
 class RoleManager(commands.Cog):
+   
     def __init__(self, bot):
         self.bot = bot
     
@@ -51,26 +58,20 @@ class RoleManager(commands.Cog):
     async def role_menu(self, interaction: disnake.CommandInteraction):
         roles = [role for role in interaction.guild.roles]
         options = []
-        
         for role in roles:
-            
             match True:
                 case _ if role.is_default():
                     continue
-
                 case _ if role.permissions.administrator:
                     continue
-
                 case _ if role.managed:
                     continue
-
                 case _ if role.position >= interaction.guild.me.top_role.position:
                     continue
-
             options.append(disnake.SelectOption(label=role.name, value=str(role.id)))
-
         embed = disnake.Embed(title="🎭 Выбор ролей",description="Выберите роль для добавления/удаления",color=disnake.Color.blue())
         await interaction.response.send_message(embed=embed,view=RoleView(options), ephemeral=True)
+
 
 
 def setup(bot):

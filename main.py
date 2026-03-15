@@ -26,5 +26,4 @@ for file in os.listdir(r"./cogs"):
         except Exception as e:
             print(f"❌ Failed to load {file}: {e}")
 
-
 bot.run(config.token)

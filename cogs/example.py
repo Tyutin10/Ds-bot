@@ -5,6 +5,7 @@ import disnake
 
 
 class Example(commands.Cog):
+    
     def __init__(self, bot):
         self.bot = bot
     
@@ -12,9 +13,11 @@ class Example(commands.Cog):
     async def on_ready(self):
         print("Example ready!")
 
-    @commands.slash_command()
+    @commands.slash_command(name='sosal', description="test command")
     async def sosal(self, interaction: disnake.CommandInteraction):
         await interaction.response.send_message("yes", ephemeral=True)
+
+
 
 def setup(bot: Bot):
    bot.add_cog(Example(bot))
