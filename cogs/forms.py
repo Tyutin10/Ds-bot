@@ -12,7 +12,7 @@ class MyModal(disnake.ui.Modal):
 
     async def callback(self, inter: disnake.ModalInteraction):
         user_text = inter.values["user_text"]
-        await inter.response.send_message(f"Вы написали: {user_text}")
+        await inter.response.send_message(f"Кто-то написал: {user_text}")
 
 class MyView(disnake.ui.View):
     
