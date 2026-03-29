@@ -7,6 +7,8 @@ from db import create_user
 
 # handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
 
+TOKEN = os.getenv("DISCORD_TOKEN")
+
 config = Config()
 config.get_config('config.json')
 
@@ -39,4 +41,4 @@ for file in os.listdir(r"./cogs"):
         except Exception as e:
             print(f"❌ Failed to load {file}: {e}")
 
-bot.run(config.token)
+bot.run(TOKEN)

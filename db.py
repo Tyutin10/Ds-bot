@@ -5,7 +5,7 @@ async def create_user(discord_id, username):
         user='user',
         password='password',
         database='ds_bot',
-        host='localhost',
+        host='host.docker.internal',
         port=5432
     )
     await conn.execute(
