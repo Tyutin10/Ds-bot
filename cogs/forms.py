@@ -11,8 +11,12 @@ class MyModal(disnake.ui.Modal):
         super().__init__(title="Введите текст", custom_id="my_modal", components=components)
 
     async def callback(self, inter: disnake.ModalInteraction):
-        user_text = inter.values["user_text"]
-        await inter.response.send_message(f"Кто-то написал: {user_text}")
+        if "https://shikimori.io/animes/" in inter.values["user_text"]:
+             user_text = inter.values["user_text"]
+             await inter.response.send_message(f"'Это ссылка шикомори -' {user_text}")
+        else: 
+            user_text = inter.values["user_text"]
+            await inter.response.send_message(f"Кто-то написал: {user_text}")
 
 class MyView(disnake.ui.View):
     
