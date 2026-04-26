@@ -1,2 +1,5 @@
 disnake 
 asyncpg
+requests
+beautifulsoup4
+lxml

@@ -4,6 +4,7 @@ import logging
 from config import Config
 import os
 from db import create_user
+from migrator import run_migrations
 
 # handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
 
@@ -15,11 +16,21 @@ config.get_config('config.json')
 intents = disnake.Intents.all()
 bot = InteractionBot(intents=intents)
 
+initialized = False
+
 @bot.event
 async def on_ready():
+
+    global initialized
+    if initialized:
+        return
+    initialized = True
+
     print(f"✅ BOT logged as {bot.user}")
     print(f"🆔 ID: {bot.user.id}")
     print(f"📊 Servers: {len(bot.guilds)}")
+
+    await run_migrations()
 
     for guild in bot.guilds:
         for member in guild.members:
