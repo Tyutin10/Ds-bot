@@ -1,6 +1,7 @@
 import disnake
 from disnake.ext import commands
 from disnake import TextInputStyle
+import re
 
 
 class MyModal(disnake.ui.Modal):
@@ -26,16 +27,20 @@ class MyModal(disnake.ui.Modal):
 
     async def callback(self, inter: disnake.ModalInteraction):
         user_text = inter.values["user_text"]
+ 
+        if user_text.startswith("http"):
+            link = re.search("^https?:\\/\\/(?:www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b(?:[-a-zA-Z0-9()@:%_\\+.~#?&\\/=]*)$", user_text)
+            if link is not None:
+                
+                handler = inter.bot.get_cog("LinkHandler")
 
-        if user_text.startswith("http://") or user_text.startswith("https://"):
-            
-            handler = inter.bot.get_cog("LinkHandler")
+                if handler:
+                    await handler.handle_link(inter, user_text)
+                else:
+                    await inter.response.send_message("❌ Обработчик ссылок не найден")
 
-            if handler:
-                await handler.handle_link(inter, user_text)
             else:
-                await inter.response.send_message("❌ Обработчик ссылок не найден")
-
+                await inter.response.send_message(f"❌ Некорректно введена ссылка")
         else:
             await inter.response.send_message(f"Кто-то написал: {user_text}")
 
